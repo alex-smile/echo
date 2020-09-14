@@ -137,7 +137,32 @@ func websocket(w http.ResponseWriter, r *http.Request) {
 
 func websocketIndex(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
+}
 
+func cors(w http.ResponseWriter, r *http.Request) {
+	allowedOrigin := chi.URLParam(r, "allowed_origin")
+	allowedHeaders := chi.URLParam(r, "allowed_headers")
+	allowedMethods := chi.URLParam(r, "allowed_methods")
+	maxAge := chi.URLParam(r, "max_age")
+	allowCredentials := chi.URLParam(r, "allow_credentials")
+
+	if allowedOrigin != "" {
+		w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+	}
+	if allowedHeaders != "" {
+		w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
+	}
+	if allowedMethods != "" {
+		w.Header().Set("Access-Control-Allow-Methods", allowedMethods)
+	}
+	if maxAge != "" {
+		w.Header().Set("Access-Control-Max-Age", maxAge)
+	}
+	if allowCredentials == "true" {
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+	}
+
+	w.Write([]byte("ok"))
 }
 
 func registerAPIs(r *chi.Mux) {
@@ -158,6 +183,8 @@ func registerAPIs(r *chi.Mux) {
 
 	r.HandleFunc("/ws/index/", websocketIndex)
 	r.HandleFunc("/ws/", websocket)
+
+	r.HandleFunc("/cors/", cors)
 }
 
 func main() {
