@@ -140,11 +140,11 @@ func websocketIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func cors(w http.ResponseWriter, r *http.Request) {
-	allowedOrigin := chi.URLParam(r, "allowed_origin")
-	allowedHeaders := chi.URLParam(r, "allowed_headers")
-	allowedMethods := chi.URLParam(r, "allowed_methods")
-	maxAge := chi.URLParam(r, "max_age")
-	allowCredentials := chi.URLParam(r, "allow_credentials")
+	allowedOrigin := r.URL.Query().Get("allowed_origin")
+	allowedHeaders := r.URL.Query().Get("allowed_headers")
+	allowedMethods := r.URL.Query().Get("allowed_methods")
+	maxAge := r.URL.Query().Get("max_age")
+	allowCredentials := r.URL.Query().Get("allow_credentials")
 
 	if allowedOrigin != "" {
 		w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
@@ -201,7 +201,7 @@ func main() {
 	}
 
 	r := chi.NewRouter()
-	r.Use(middleware.DefaultCompress)
+	//r.Use(middleware.DefaultCompress)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 
